@@ -25,11 +25,10 @@ services:
             - "6379:${REDIS_PORT}"
 
     xapi:
-        image: learninglocker/xapi-service:latest
-        restart: unless-stopped
-        environment:
-            - MONGO_URL
-            - REDIS_URL
+        build: ./xapi
+        restart: always
+        env_file: 
+            - ./.env
         depends_on:
             - mongo
             - redis
@@ -65,16 +64,17 @@ services:
             - ll-volume:/opt/learninglocker/storage
 
     nginx:
-        image: jgasparetti/learninglocker2-nginx:${DOCKER_TAG}
-        environment:
-            - DOMAIN_NAME
-        restart: unless-stopped
+        build: ./nginx
+        env_file: 
+            - ./.env
+        restart: always
         depends_on:
-            - ui
+            - webapp
             - xapi
+        networks: 
+            - learninglocker-network
         ports:
-            - "443:443"
-            - "80:80"
+            - "80:${DOMAIN_PORT}"
 
 volumes:
     mongodb-volume:

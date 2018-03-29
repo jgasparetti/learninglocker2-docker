@@ -6,30 +6,20 @@
 # 
 
 upstream backend_ui {
-  server ui:3000;
+  #server ui:${UI_PORT};
+  server webapp:${UI_PORT};
 }
 
 upstream backend_xapi {
-  server xapi:8081;
+  server xapi:${EXPRESS_PORT};
 }
 
 server {
-  listen       80 default_server;
-  listen       [::]:80 default_server;
-  server_name  $DOMAIN_NAME;
-  return 301 https://$DOMAIN_NAME${DOLLAR}request_uri;
-}
-
-server {
-  listen       443 ssl default_server;
-  listen       [::]:443 ssl default_server;
+  listen       ${DOMAIN_PORT} default_server;
+  listen       [::]:${DOMAIN_PORT} default_server;
   server_name  $DOMAIN_NAME;
 
   access_log  /var/log/nginx/access.log;
-
-  ssl on;
-  ssl_certificate /root/ssl/fullchain.pem;
-  ssl_certificate_key /root/ssl/privkey.pem;
 
   # xAPI endpoints
   location ~* ^/data/xAPI(.*)${DOLLAR} {
