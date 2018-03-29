@@ -1,9 +1,14 @@
-version: '3'
+version: '3.6'
 services:
 
     mongo:
-        image: mongo:3
-        restart: unless-stopped
+        image: mongo:3.4
+#       image: mongo:3 MONGO 3.6 HAS INCOMPATIBILITY WITH $pushAll
+        restart: always
+        env_file: 
+            - ./.env
+        networks: 
+            - learninglocker-network
         volumes:
             - "${DATA_LOCATION}/mongo:/data/db"
 
